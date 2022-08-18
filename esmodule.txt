@@ -1,0 +1,8 @@
+find-up@6
+chalk@5
+is-root@3
+escape-string-regexp@5
+pkg-up@4
+strip-ansi@7
+gzip-size@7
+camelcase@7
