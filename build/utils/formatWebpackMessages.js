@@ -117,4 +117,3 @@ function formatWebpackMessages(json) {
 }
 
 module.exports = formatWebpackMessages;
-

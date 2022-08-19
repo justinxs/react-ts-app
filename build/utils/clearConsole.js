@@ -5,4 +5,3 @@ function clearConsole() {
 }
 
 module.exports = clearConsole;
-

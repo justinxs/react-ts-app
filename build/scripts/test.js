@@ -254,6 +254,5 @@ if (!resolvedEnv) {
 }
 const testEnvironment = resolvedEnv || env;
 argv.push('--env', testEnvironment);
-// @remove-on-eject-end
-jest.run(argv);
 
+jest.run(argv);

@@ -6,7 +6,9 @@ class ModuleScopePlugin {
   constructor(appSrc, allowedFiles = []) {
     this.appSrcs = Array.isArray(appSrc) ? appSrc : [appSrc];
     this.allowedFiles = new Set(allowedFiles);
-    this.allowedPaths = [...allowedFiles].map(path.dirname).filter(p => path.relative(p, process.cwd()) !== '');
+    this.allowedPaths = [...allowedFiles]
+      .map(path.dirname)
+      .filter((p) => path.relative(p, process.cwd()) !== '');
   }
 
   apply(resolver) {
@@ -30,7 +32,7 @@ class ModuleScopePlugin {
         // Resolve the issuer from our appSrc and make sure it's one of our files
         // Maybe an indexOf === 0 would be better?
         if (
-          appSrcs.every(appSrc => {
+          appSrcs.every((appSrc) => {
             const relative = path.relative(appSrc, request.context.issuer);
             // If it's not in one of our app src or a subdirectory, not our request!
             return relative.startsWith('../') || relative.startsWith('..\\');
@@ -45,15 +47,17 @@ class ModuleScopePlugin {
         if (this.allowedFiles.has(requestFullPath)) {
           return callback();
         }
-        if (this.allowedPaths.some((allowedFile) => {
-          return requestFullPath.startsWith(allowedFile);
-        })) {
+        if (
+          this.allowedPaths.some((allowedFile) => {
+            return requestFullPath.startsWith(allowedFile);
+          })
+        ) {
           return callback();
         }
         // Find path from src to the requested file
         // Error if in a parent directory of all given appSrcs
         if (
-          appSrcs.every(appSrc => {
+          appSrcs.every((appSrc) => {
             const requestRelative = path.relative(appSrc, requestFullPath);
             return (
               requestRelative.startsWith('../') ||
@@ -80,7 +84,7 @@ class ModuleScopePlugin {
           Object.defineProperty(scopeError, '__module_scope_plugin', {
             value: true,
             writable: false,
-            enumerable: false,
+            enumerable: false
           });
           callback(scopeError, request);
         } else {

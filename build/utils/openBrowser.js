@@ -9,7 +9,7 @@ var OSX_CHROME = 'google chrome';
 const Actions = Object.freeze({
   NONE: 0,
   BROWSER: 1,
-  SCRIPT: 2,
+  SCRIPT: 2
 });
 
 function getBrowserEnv() {
@@ -37,9 +37,9 @@ function getBrowserEnv() {
 function executeNodeScript(scriptPath, url) {
   const extraArgs = process.argv.slice(2);
   const child = spawn(process.execPath, [scriptPath, ...extraArgs, url], {
-    stdio: 'inherit',
+    stdio: 'inherit'
   });
-  child.on('close', code => {
+  child.on('close', (code) => {
     if (code !== 0) {
       console.log();
       console.log(
@@ -72,7 +72,7 @@ function startBrowserProcess(browser, url, args) {
       'Microsoft Edge',
       'Brave Browser',
       'Vivaldi',
-      'Chromium',
+      'Chromium'
     ];
 
     for (let chromiumBrowser of supportedChromiumBrowsers) {
@@ -88,7 +88,7 @@ function startBrowserProcess(browser, url, args) {
             '"',
           {
             cwd: __dirname,
-            stdio: 'ignore',
+            stdio: 'ignore'
           }
         );
         return true;

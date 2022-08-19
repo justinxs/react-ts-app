@@ -100,4 +100,3 @@ function formatter(results) {
 }
 
 module.exports = formatter;
-

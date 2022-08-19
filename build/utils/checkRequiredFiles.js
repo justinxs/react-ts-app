@@ -21,4 +21,3 @@ function checkRequiredFiles(files) {
 }
 
 module.exports = checkRequiredFiles;
-

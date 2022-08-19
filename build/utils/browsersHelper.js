@@ -85,4 +85,3 @@ function checkBrowsers(dir, isInteractive, retry = true) {
 }
 
 module.exports = { defaultBrowsers, checkBrowsers };
-

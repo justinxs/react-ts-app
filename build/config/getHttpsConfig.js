@@ -1,13 +1,3 @@
-// @remove-on-eject-begin
-/**
- * Copyright (c) 2015-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-// @remove-on-eject-end
-'use strict';
-
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
@@ -62,7 +52,7 @@ function getHttpsConfig() {
     const keyFile = path.resolve(paths.appPath, SSL_KEY_FILE);
     const config = {
       cert: readEnvFile(crtFile, 'SSL_CRT_FILE'),
-      key: readEnvFile(keyFile, 'SSL_KEY_FILE'),
+      key: readEnvFile(keyFile, 'SSL_KEY_FILE')
     };
 
     validateKeyAndCerts({ ...config, keyFile, crtFile });
