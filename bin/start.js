@@ -26,7 +26,6 @@ import getPaths from './config/paths.js';
 
 const { require } = compatMJSModule(import.meta.url);
 const paths = getPaths();
-console.log(paths);
 const react = require(require.resolve('react', { paths: [paths.appPath] }));
 
 const env = getClientEnvironment(paths.publicUrlOrPath.slice(0, -1));
