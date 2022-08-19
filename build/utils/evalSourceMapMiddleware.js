@@ -1,11 +1,3 @@
-/**
- * Copyright (c) 2015-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-'use strict';
-
 function base64SourceMap(source) {
   const base64 = Buffer.from(JSON.stringify(source.map()), 'utf8').toString(
     'base64'
@@ -15,7 +7,7 @@ function base64SourceMap(source) {
 
 function getSourceById(server, id) {
   const module = Array.from(server._stats.compilation.modules).find(
-    (m) => server._stats.compilation.chunkGraph.getModuleId(m) == id,
+    (m) => server._stats.compilation.chunkGraph.getModuleId(m) == id
   );
   return module.originalSource();
 }
@@ -45,3 +37,4 @@ module.exports = function createEvalSourceMapMiddleware(server) {
     }
   };
 };
+

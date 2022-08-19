@@ -1,12 +1,3 @@
-/**
- * Copyright (c) 2015-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-
-'use strict';
-
 var fs = require('fs');
 var path = require('path');
 var chalk = require('chalk');
@@ -34,11 +25,11 @@ function printFileSizesAfterBuild(
   var root = previousSizeMap.root;
   var sizes = previousSizeMap.sizes;
   var assets = (webpackStats.stats || [webpackStats])
-    .map(stats =>
+    .map((stats) =>
       stats
         .toJson({ all: false, assets: true })
-        .assets.filter(asset => canReadAsset(asset.name))
-        .map(asset => {
+        .assets.filter((asset) => canReadAsset(asset.name))
+        .map((asset) => {
           var fileContents = fs.readFileSync(path.join(root, asset.name));
           var size = gzipSize(fileContents);
           var previousSize = sizes[removeFileNameHash(root, asset.name)];
@@ -51,7 +42,7 @@ function printFileSizesAfterBuild(
             name: path.basename(asset.name),
             size: size,
             sizeLabel:
-              filesize(size) + (difference ? ' (' + difference + ')' : ''),
+              filesize(size) + (difference ? ' (' + difference + ')' : '')
           };
         })
     )
@@ -59,10 +50,10 @@ function printFileSizesAfterBuild(
   assets.sort((a, b) => b.size - a.size);
   var longestSizeLabelLength = Math.max.apply(
     null,
-    assets.map(a => stripAnsi(a.sizeLabel).length)
+    assets.map((a) => stripAnsi(a.sizeLabel).length)
   );
   var suggestBundleSplitting = false;
-  assets.forEach(asset => {
+  assets.forEach((asset) => {
     var sizeLabel = asset.sizeLabel;
     var sizeLength = stripAnsi(sizeLabel).length;
     if (sizeLength < longestSizeLabelLength) {
@@ -131,7 +122,7 @@ function getDifferenceLabel(currentSize, previousSize) {
 }
 
 function measureFileSizesBeforeBuild(buildFolder) {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     recursive(buildFolder, (err, fileNames) => {
       var sizes;
       if (!err && fileNames) {
@@ -144,7 +135,7 @@ function measureFileSizesBeforeBuild(buildFolder) {
       }
       resolve({
         root: buildFolder,
-        sizes: sizes || {},
+        sizes: sizes || {}
       });
     });
   });
@@ -152,5 +143,6 @@ function measureFileSizesBeforeBuild(buildFolder) {
 
 module.exports = {
   measureFileSizesBeforeBuild: measureFileSizesBeforeBuild,
-  printFileSizesAfterBuild: printFileSizesAfterBuild,
+  printFileSizesAfterBuild: printFileSizesAfterBuild
 };
+

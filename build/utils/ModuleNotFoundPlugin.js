@@ -1,12 +1,3 @@
-/**
- * Copyright (c) 2015-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-
-'use strict';
-
 const chalk = require('chalk');
 const findUp = require('find-up');
 const path = require('path');
@@ -76,7 +67,7 @@ class ModuleNotFoundPlugin {
             (isYarn
               ? chalk.bold(`yarn add ${target}`)
               : chalk.bold(`npm install ${target}`)) +
-            '.',
+            '.'
         ];
       } else if (isFile) {
         details = [`Cannot find file '${target}' in '${context}'.`];
@@ -111,11 +102,11 @@ class ModuleNotFoundPlugin {
               }
               callback(err, ...args);
             });
-          },
+          }
         });
-      },
+      }
     });
-    compiler.hooks.normalModuleFactory.tap('ModuleNotFoundPlugin', nmf => {
+    compiler.hooks.normalModuleFactory.tap('ModuleNotFoundPlugin', (nmf) => {
       nmf.hooks.afterResolve.intercept({
         register(tap) {
           if (tap.name !== 'CaseSensitivePathsPlugin') {
@@ -133,9 +124,9 @@ class ModuleNotFoundPlugin {
                 }
                 callback(err, ...args);
               });
-            },
+            }
           });
-        },
+        }
       });
     });
   }

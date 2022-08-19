@@ -1,12 +1,3 @@
-/**
- * Copyright (c) 2015-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-
-'use strict';
-
 const friendlySyntaxErrorLabel = 'Syntax error:';
 
 function isLikelyASyntaxError(message) {
@@ -22,7 +13,7 @@ function formatMessage(message) {
   } else if ('message' in message) {
     lines = message['message'].split('\n');
   } else if (Array.isArray(message)) {
-    message.forEach(message => {
+    message.forEach((message) => {
       if ('message' in message) {
         lines = message['message'].split('\n');
       }
@@ -31,11 +22,11 @@ function formatMessage(message) {
 
   // Strip webpack-added headers off errors/warnings
   // https://github.com/webpack/webpack/blob/master/lib/ModuleError.js
-  lines = lines.filter(line => !/Module [A-z ]+\(from/.test(line));
+  lines = lines.filter((line) => !/Module [A-z ]+\(from/.test(line));
 
   // Transform parsing error into syntax error
   // TODO: move this to our ESLint formatter?
-  lines = lines.map(line => {
+  lines = lines.map((line) => {
     const parsingError = /Line (\d+):(?:(\d+):)?\s*Parsing error: (.+)$/.exec(
       line
     );
@@ -80,7 +71,7 @@ function formatMessage(message) {
       lines[0],
       lines[1]
         .replace('Error: ', '')
-        .replace('Module not found: Cannot find file:', 'Cannot find file:'),
+        .replace('Module not found: Cannot find file:', 'Cannot find file:')
     ];
   }
 
@@ -126,3 +117,4 @@ function formatWebpackMessages(json) {
 }
 
 module.exports = formatWebpackMessages;
+

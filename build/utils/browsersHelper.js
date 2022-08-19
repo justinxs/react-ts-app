@@ -1,11 +1,3 @@
-/**
- * Copyright (c) 2015-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-'use strict';
-
 const browserslist = require('browserslist');
 const chalk = require('chalk');
 const os = require('os');
@@ -18,8 +10,8 @@ const defaultBrowsers = {
   development: [
     'last 1 chrome version',
     'last 1 firefox version',
-    'last 1 safari version',
-  ],
+    'last 1 safari version'
+  ]
 };
 
 function shouldSetBrowsers(isInteractive) {
@@ -35,10 +27,10 @@ function shouldSetBrowsers(isInteractive) {
       `\n\nWould you like to add the defaults to your ${chalk.bold(
         'package.json'
       )}?`,
-    initial: true,
+    initial: true
   };
 
-  return prompts(question).then(answer => answer.shouldSetBrowsers);
+  return prompts(question).then((answer) => answer.shouldSetBrowsers);
 }
 
 function checkBrowsers(dir, isInteractive, retry = true) {
@@ -61,14 +53,14 @@ function checkBrowsers(dir, isInteractive, retry = true) {
     );
   }
 
-  return shouldSetBrowsers(isInteractive).then(shouldSetBrowsers => {
+  return shouldSetBrowsers(isInteractive).then((shouldSetBrowsers) => {
     if (!shouldSetBrowsers) {
       return checkBrowsers(dir, isInteractive, false);
     }
 
     return (
       pkgUp({ cwd: dir })
-        .then(filePath => {
+        .then((filePath) => {
           if (filePath == null) {
             return Promise.reject();
           }
@@ -93,3 +85,4 @@ function checkBrowsers(dir, isInteractive, retry = true) {
 }
 
 module.exports = { defaultBrowsers, checkBrowsers };
+

@@ -1,11 +1,3 @@
-/**
- * Copyright (c) 2015-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-'use strict';
-
 const address = require('address');
 const fs = require('fs');
 const path = require('path');
@@ -22,19 +14,19 @@ const forkTsCheckerWebpackPlugin = require('./ForkTsCheckerWebpackPlugin');
 const isInteractive = process.stdout.isTTY;
 
 function prepareUrls(protocol, host, port, pathname = '/') {
-  const formatUrl = hostname =>
+  const formatUrl = (hostname) =>
     url.format({
       protocol,
       hostname,
       port,
-      pathname,
+      pathname
     });
-  const prettyPrintUrl = hostname =>
+  const prettyPrintUrl = (hostname) =>
     url.format({
       protocol,
       hostname,
       port: chalk.bold(port),
-      pathname,
+      pathname
     });
 
   const isUnspecifiedHost = host === '0.0.0.0' || host === '::';
@@ -71,7 +63,7 @@ function prepareUrls(protocol, host, port, pathname = '/') {
     lanUrlForConfig,
     lanUrlForTerminal,
     localUrlForTerminal,
-    localUrlForBrowser,
+    localUrlForBrowser
   };
 }
 
@@ -106,7 +98,7 @@ function createCompiler({
   urls,
   useYarn,
   useTypeScript,
-  webpack,
+  webpack
 }) {
   // "Compiler" is a low-level interface to webpack.
   // It lets us listen to some events and provide our own custom messages.
@@ -149,7 +141,7 @@ function createCompiler({
 
   // "done" event fires when webpack has finished recompiling the bundle.
   // Whether or not you have warnings or errors, you will get this event.
-  compiler.hooks.done.tap('done', async stats => {
+  compiler.hooks.done.tap('done', async (stats) => {
     if (isInteractive) {
       clearConsole();
     }
@@ -162,7 +154,7 @@ function createCompiler({
     const statsData = stats.toJson({
       all: false,
       warnings: true,
-      errors: true,
+      errors: true
     });
 
     const messages = formatWebpackMessages(statsData);
@@ -209,14 +201,14 @@ function createCompiler({
   // You can safely remove this after ejecting.
   // We only use this block for testing of Create React App itself:
   const isSmokeTest = process.argv.some(
-    arg => arg.indexOf('--smoke-test') > -1
+    (arg) => arg.indexOf('--smoke-test') > -1
   );
   if (isSmokeTest) {
     compiler.hooks.failed.tap('smokeTest', async () => {
       await tsMessagesPromise;
       process.exit(1);
     });
-    compiler.hooks.done.tap('smokeTest', async stats => {
+    compiler.hooks.done.tap('smokeTest', async (stats) => {
       await tsMessagesPromise;
       if (stats.hasErrors() || stats.hasWarnings()) {
         process.exit(1);
@@ -371,7 +363,7 @@ function prepareProxy(proxy, appPublicFolder, servedPathname) {
             req.headers.accept.indexOf('text/html') === -1)
         );
       },
-      onProxyReq: proxyReq => {
+      onProxyReq: (proxyReq) => {
         // Browsers may send Origin headers even with same-origin
         // requests. To prevent CORS issues, we have to change
         // the Origin to match the target URL.
@@ -383,15 +375,15 @@ function prepareProxy(proxy, appPublicFolder, servedPathname) {
       secure: false,
       changeOrigin: true,
       ws: true,
-      xfwd: true,
-    },
+      xfwd: true
+    }
   ];
 }
 
 function choosePort(host, defaultPort) {
   return detect(defaultPort, host).then(
-    port =>
-      new Promise(resolve => {
+    (port) =>
+      new Promise((resolve) => {
         if (port === defaultPort) {
           return resolve(port);
         }
@@ -410,9 +402,9 @@ function choosePort(host, defaultPort) {
                 message +
                   `${existingProcess ? ` Probably:\n  ${existingProcess}` : ''}`
               ) + '\n\nWould you like to run the app on another port instead?',
-            initial: true,
+            initial: true
           };
-          prompts(question).then(answer => {
+          prompts(question).then((answer) => {
             if (answer.shouldChangePort) {
               resolve(port);
             } else {
@@ -424,7 +416,7 @@ function choosePort(host, defaultPort) {
           resolve(null);
         }
       }),
-    err => {
+    (err) => {
       throw new Error(
         chalk.red(`Could not find an open port at ${chalk.bold(host)}.`) +
           '\n' +
@@ -439,5 +431,6 @@ module.exports = {
   choosePort,
   createCompiler,
   prepareProxy,
-  prepareUrls,
+  prepareUrls
 };
+

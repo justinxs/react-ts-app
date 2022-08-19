@@ -1,12 +1,3 @@
-/**
- * Copyright (c) 2015-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-
-'use strict';
-
 var chalk = require('chalk');
 var execSync = require('child_process').execSync;
 var execFileSync = require('child_process').execFileSync;
@@ -17,8 +8,8 @@ var execOptions = {
   stdio: [
     'pipe', // stdin (default)
     'pipe', // stdout (default)
-    'ignore', //stderr
-  ],
+    'ignore' //stderr
+  ]
 };
 
 function isProcessAReactApp(processCommand) {
@@ -26,7 +17,11 @@ function isProcessAReactApp(processCommand) {
 }
 
 function getProcessIdOnPort(port) {
-  return execFileSync('lsof', ['-i:' + port, '-P', '-t', '-sTCP:LISTEN'], execOptions)
+  return execFileSync(
+    'lsof',
+    ['-i:' + port, '-P', '-t', '-sTCP:LISTEN'],
+    execOptions
+  )
     .split('\n')[0]
     .trim();
 }
@@ -83,3 +78,4 @@ function getProcessForPort(port) {
 }
 
 module.exports = getProcessForPort;
+
