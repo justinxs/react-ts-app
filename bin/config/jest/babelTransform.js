@@ -1,7 +1,7 @@
 import babelJest from 'babel-jest';
-import compatMJSModule from '../../utils/compatMJSModule.js';
+import compatCJSModule from '../../utils/compatCJSModule.js';
 
-const { require } = compatMJSModule(import.meta.url);
+const { require } = compatCJSModule(import.meta.url);
 
 const hasJsxRuntime = (() => {
   if (process.env.DISABLE_NEW_JSX_TRANSFORM === 'true') {

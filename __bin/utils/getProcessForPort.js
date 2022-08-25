@@ -1,9 +1,9 @@
 import path from 'node:path';
 import { execSync, execFileSync } from 'node:child_process';
 import chalk from 'chalk';
-import compatMJSModule from './compatMJSModule.js';
+import compatCJSModule from './compatCJSModule.js';
 
-const { require } = compatMJSModule(import.meta.url);
+const { require } = compatCJSModule(import.meta.url);
 
 var execOptions = {
   encoding: 'utf8',

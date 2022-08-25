@@ -3,9 +3,9 @@ import chalk from 'chalk';
 import open from 'open';
 import spawn from 'cross-spawn';
 
-import compatMJSModule from './compatMJSModule.js';
+import compatCJSModule from './compatCJSModule.js';
 
-const { dirname } = compatMJSModule(import.meta.url);
+const { dirname } = compatCJSModule(import.meta.url);
 // https://github.com/sindresorhus/open#app
 var OSX_CHROME = 'google chrome';
 

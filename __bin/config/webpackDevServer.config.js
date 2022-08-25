@@ -3,13 +3,13 @@ import fs from 'node:fs';
 import getPaths from './paths.js';
 import getHttpsConfig from './getHttpsConfig.js';
 
-import compatMJSModule from '../utils/compatMJSModule.js';
+import compatCJSModule from '../utils/compatCJSModule.js';
 import evalSourceMapMiddleware from '../utils/evalSourceMapMiddleware.js';
 import noopServiceWorkerMiddleware from '../utils/noopServiceWorkerMiddleware.js';
 import ignoredFiles from '../utils/ignoredFiles.js';
 import redirectServedPath from '../utils/redirectServedPathMiddleware.js';
 
-const { require } = compatMJSModule(import.meta.url);
+const { require } = compatCJSModule(import.meta.url);
 const paths = getPaths();
 const host = process.env.HOST || '0.0.0.0';
 const sockHost = process.env.WDS_SOCKET_HOST;

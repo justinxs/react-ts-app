@@ -14,12 +14,12 @@ import printHostingInstructions from './utils/printHostingInstructions.js';
 import FileSizeReporter from './utils/FileSizeReporter.js';
 import printBuildError from './utils/printBuildError.js';
 import { checkBrowsers } from './utils/browsersHelper.js';
-import compatMJSModule from './utils/compatMJSModule.js';
+import compatCJSModule from './utils/compatCJSModule.js';
 
 import configFactory from './config/webpack.config.js';
 import getPaths from './config/paths.js';
 
-const { require } = compatMJSModule(import.meta.url);
+const { require } = compatCJSModule(import.meta.url);
 const paths = getPaths();
 
 const measureFileSizesBeforeBuild =

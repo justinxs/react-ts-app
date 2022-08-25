@@ -10,12 +10,12 @@ import chalk from 'chalk';
 import jest from 'jest';
 import resolve from 'resolve';
 
-import compatMJSModule from './utils/compatMJSModule.js';
+import compatCJSModule from './utils/compatCJSModule.js';
 
 import modules from './config/modules.js';
 import getPaths from './config/paths.js';
 
-const { require, dirname } = compatMJSModule(import.meta.url);
+const { require, dirname } = compatCJSModule(import.meta.url);
 const paths = getPaths();
 
 let argv = process.argv.slice(2);

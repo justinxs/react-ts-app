@@ -1,6 +1,6 @@
-import compatMJSModule from './compatMJSModule.js';
+import compatCJSModule from './compatCJSModule.js';
 
-const { require } = compatMJSModule(import.meta.url);
+const { require } = compatCJSModule(import.meta.url);
 
 export default function getCacheIdentifier(environment, packages) {
   let cacheIdentifier = environment == null ? '' : environment.toString();

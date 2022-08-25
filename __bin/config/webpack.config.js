@@ -21,13 +21,13 @@ import getCSSModuleLocalIdent from '../utils/getCSSModuleLocalIdent.js';
 import ModuleNotFoundPlugin from '../utils/ModuleNotFoundPlugin.js';
 import getCacheIdentifier from '../utils/getCacheIdentifier.js';
 import createEnvironmentHash from '../utils/createEnvironmentHash.js';
-import compatMJSModule from '../utils/compatMJSModule.js';
+import compatCJSModule from '../utils/compatCJSModule.js';
 
 import getClientEnvironment from './env.js';
 import getPaths from './paths.js';
 import modules from './modules.js';
 
-const { require, filename, dirname } = compatMJSModule(import.meta.url);
+const { require, filename, dirname } = compatCJSModule(import.meta.url);
 const paths = getPaths();
 
 class ForkTsCheckerWarningWebpackPlugin {

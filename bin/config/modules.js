@@ -2,10 +2,10 @@ import path from 'node:path';
 import fs from 'node:fs';
 import chalk from 'chalk';
 
-import compatMJSModule from '../utils/compatMJSModule.js';
+import compatCJSModule from '../utils/compatCJSModule.js';
 import { paths } from './env.js';
 
-const { require } = compatMJSModule(import.meta.url);
+const { require } = compatCJSModule(import.meta.url);
 
 /**
  * Get additional module paths based on the baseUrl of a compilerOptions object.

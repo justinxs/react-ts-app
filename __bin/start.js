@@ -18,13 +18,13 @@ import {
 } from './utils/WebpackDevServerUtils.js';
 import openBrowser from './utils/openBrowser.js';
 import { checkBrowsers } from './utils/browsersHelper.js';
-import compatMJSModule from './utils/compatMJSModule.js';
+import compatCJSModule from './utils/compatCJSModule.js';
 
 import configFactory from './config/webpack.config.js';
 import createDevServerConfig from './config/webpackDevServer.config.js';
 import getPaths from './config/paths.js';
 
-const { require } = compatMJSModule(import.meta.url);
+const { require } = compatCJSModule(import.meta.url);
 const paths = getPaths();
 const react = require(require.resolve('react', { paths: [paths.appPath] }));
 

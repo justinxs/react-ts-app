@@ -1,6 +1,6 @@
-import compatMJSModule from '../utils/compatMJSModule.js';
+import compatCJSModule from '../utils/compatCJSModule.js';
 
-const { require } = compatMJSModule(import.meta.url);
+const { require } = compatCJSModule(import.meta.url);
 
 export default function jsLoaders({ paths, process_env }) {
   const hasJsxRuntime = (() => {

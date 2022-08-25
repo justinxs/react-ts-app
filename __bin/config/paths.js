@@ -1,10 +1,10 @@
 import path from 'node:path';
 import fs from 'node:fs';
 
-import compatMJSModule from '../utils/compatMJSModule.js';
+import compatCJSModule from '../utils/compatCJSModule.js';
 import getPublicUrlOrPath from '../utils/getPublicUrlOrPath.js';
 
-const { require } = compatMJSModule(import.meta.url);
+const { require } = compatCJSModule(import.meta.url);
 
 // Make sure any symlinks in the project folder are resolved:
 // https://github.com/facebook/create-react-app/issues/637

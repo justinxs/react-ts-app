@@ -8,11 +8,11 @@ import chalk from 'chalk';
 import jest from 'jest';
 import resolve from 'resolve';
 
-import compatMJSModule from './utils/compatMJSModule.js';
+import compatCJSModule from './utils/compatCJSModule.js';
 
 import modules from './config/modules.js';
 
-const { require, dirname } = compatMJSModule(import.meta.url);
+const { require, dirname } = compatCJSModule(import.meta.url);
 
 let argv = process.argv.slice(2);
 

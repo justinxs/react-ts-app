@@ -3,10 +3,10 @@ import fs from 'node:fs';
 import chalk from 'chalk';
 import resolve from 'resolve';
 
-import compatMJSModule from '../utils/compatMJSModule.js';
+import compatCJSModule from '../utils/compatCJSModule.js';
 import getPaths from './paths.js';
 
-const { require } = compatMJSModule(import.meta.url);
+const { require } = compatCJSModule(import.meta.url);
 const paths = getPaths();
 
 /**

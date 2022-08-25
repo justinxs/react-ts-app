@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import dotenvExpand from 'dotenv-expand';
 import dotenv from 'dotenv';
 
-import compatMJSModule from '../utils/compatMJSModule.js';
+import compatCJSModule from '../utils/compatCJSModule.js';
 import getPublicUrlOrPath from '../utils/getPublicUrlOrPath.js';
 
 const NODE_ENV = process.env.NODE_ENV;
@@ -13,7 +13,7 @@ if (!NODE_ENV) {
   );
 }
 
-const { require } = compatMJSModule(import.meta.url);
+const { require } = compatCJSModule(import.meta.url);
 const appDirectory = fs.realpathSync(process.cwd());
 const moduleFileExtensions = [
   'web.mjs',
