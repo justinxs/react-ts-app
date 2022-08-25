@@ -1,5 +1,5 @@
 import { ReportHandler } from 'web-vitals';
-
+// web性能分析报告
 const reportWebVitals = (onPerfEntry?: ReportHandler) => {
   if (onPerfEntry && onPerfEntry instanceof Function) {
     import('web-vitals').then(({ getCLS, getFID, getFCP, getLCP, getTTFB }) => {

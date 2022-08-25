@@ -3,9 +3,8 @@ import fs from 'node:fs';
 import dotenvExpand from 'dotenv-expand';
 import dotenv from 'dotenv';
 
-import getPaths from './paths.js';
-
-const paths = getPaths();
+import compatMJSModule from '../utils/compatMJSModule.js';
+import getPublicUrlOrPath from '../utils/getPublicUrlOrPath.js';
 
 const NODE_ENV = process.env.NODE_ENV;
 if (!NODE_ENV) {
@@ -14,53 +13,99 @@ if (!NODE_ENV) {
   );
 }
 
-// https://github.com/bkeepers/dotenv#what-other-env-files-can-i-use
-const dotenvFiles = [
-  `${paths.dotenv}.${NODE_ENV}.local`,
-  // Don't include `.env.local` for `test` environment
-  // since normally you expect tests to produce the same
-  // results for everyone
-  NODE_ENV !== 'test' && `${paths.dotenv}.local`,
-  `${paths.dotenv}.${NODE_ENV}`,
-  paths.dotenv
-].filter(Boolean);
-
-// Load environment variables from .env* files. Suppress warnings using silent
-// if this file is missing. dotenv will never modify any environment variables
-// that have already been set.  Variable expansion is supported in .env files.
-// https://github.com/motdotla/dotenv
-// https://github.com/motdotla/dotenv-expand
-dotenvFiles.forEach((dotenvFile) => {
-  if (fs.existsSync(dotenvFile)) {
-    dotenvExpand.expand(
-      dotenv.config({
-        path: dotenvFile
-      })
-    );
-  }
-});
-
-// We support resolving modules according to `NODE_PATH`.
-// This lets you use absolute paths in imports inside large monorepos:
-// https://github.com/facebook/create-react-app/issues/253.
-// It works similar to `NODE_PATH` in Node itself:
-// https://nodejs.org/api/modules.html#modules_loading_from_the_global_folders
-// Note that unlike in Node, only *relative* paths from `NODE_PATH` are honored.
-// Otherwise, we risk importing Node.js core modules into an app instead of webpack shims.
-// https://github.com/facebook/create-react-app/issues/1023#issuecomment-265344421
-// We also resolve them to make sure all tools using them work consistently.
+const { require } = compatMJSModule(import.meta.url);
 const appDirectory = fs.realpathSync(process.cwd());
+const moduleFileExtensions = [
+  'web.mjs',
+  'mjs',
+  'web.js',
+  'js',
+  'web.ts',
+  'ts',
+  'web.tsx',
+  'tsx',
+  'json',
+  'web.jsx',
+  'jsx'
+];
+const REACT_APP = /^REACT_APP_/i;
+const resolveApp = (relativePath) => path.resolve(appDirectory, relativePath);
+// Resolve file paths in the same order as webpack
+const resolveModule = (resolveFn, filePath) => {
+  const extension = moduleFileExtensions.find((extension) =>
+    fs.existsSync(resolveFn(`${filePath}.${extension}`))
+  );
+
+  if (extension) {
+    return resolveFn(`${filePath}.${extension}`);
+  }
+
+  return resolveFn(`${filePath}.js`);
+};
+
+// 权重 .env.development.local > .env.local > .env.development > .env
+const expandEnv = () => {
+  const envPath = resolveApp('.env');
+  const dotenvFiles = [
+    `${envPath}.${NODE_ENV}.local`,
+    NODE_ENV !== 'test' && `${envPath}.local`,
+    `${envPath}.${NODE_ENV}`,
+    envPath
+  ].filter(Boolean);
+  dotenvFiles.forEach((dotenvFile) => {
+    if (fs.existsSync(dotenvFile)) {
+      dotenvExpand.expand(
+        dotenv.config({
+          path: dotenvFile
+        })
+      );
+    }
+  });
+};
+
+function getPaths() {
+  const publicUrlOrPath = getPublicUrlOrPath(
+    process.env.NODE_ENV === 'development',
+    require(resolveApp('package.json')).homepage,
+    process.env.PUBLIC_URL
+  );
+  const buildPath = process.env.BUILD_PATH || 'dist';
+
+  return {
+    dotenv: resolveApp('.env'),
+    appPath: resolveApp('.'),
+    appBuild: resolveApp(buildPath),
+    appPublic: resolveApp('public'),
+    appHtml: resolveApp('public/index.html'),
+    appIndexJs: resolveModule(resolveApp, 'src/index'),
+    appPackageJson: resolveApp('package.json'),
+    appSrc: resolveApp('src'),
+    appTsConfig: resolveApp('tsconfig.json'),
+    appJsConfig: resolveApp('jsconfig.json'),
+    yarnLockFile: resolveApp('yarn.lock'),
+    testsSetup: resolveModule(resolveApp, 'src/setupTests'),
+    proxySetup: resolveApp('src/setupProxy.js'),
+    appNodeModules: resolveApp('node_modules'),
+    appWebpackCache: resolveApp('node_modules/.cache'),
+    appTsBuildInfoFile: resolveApp('node_modules/.cache/tsconfig.tsbuildinfo'),
+    swSrc: resolveModule(resolveApp, 'src/service-worker'),
+    publicUrlOrPath,
+    moduleFileExtensions
+  };
+}
+
+// 获取环境配置文件，并写入process.env
+expandEnv();
+
 process.env.NODE_PATH = (process.env.NODE_PATH || '')
   .split(path.delimiter)
   .filter((folder) => folder && !path.isAbsolute(folder))
   .map((folder) => path.resolve(appDirectory, folder))
   .join(path.delimiter);
 
-// Grab NODE_ENV and REACT_APP_* environment variables and prepare them to be
-// injected into the application via DefinePlugin in webpack configuration.
-const REACT_APP = /^REACT_APP_/i;
+export const paths = getPaths();
 
-function getClientEnvironment(publicUrl) {
+export function getClientEnvironment(publicUrl) {
   const raw = Object.keys(process.env)
     .filter((key) => REACT_APP.test(key))
     .reduce(
@@ -69,28 +114,14 @@ function getClientEnvironment(publicUrl) {
         return env;
       },
       {
-        // Useful for determining whether we’re running in production mode.
-        // Most importantly, it switches React into the correct mode.
         NODE_ENV: process.env.NODE_ENV || 'development',
-        // Useful for resolving the correct path to static assets in `public`.
-        // For example, <img src={process.env.PUBLIC_URL + '/img/logo.png'} />.
-        // This should only be used as an escape hatch. Normally you would put
-        // images into the `src` and `import` them in code to get their paths.
         PUBLIC_URL: publicUrl,
-        // We support configuring the sockjs pathname during development.
-        // These settings let a developer run multiple simultaneous projects.
-        // They are used as the connection `hostname`, `pathname` and `port`
-        // in webpackHotDevClient. They are used as the `sockHost`, `sockPath`
-        // and `sockPort` options in webpack-dev-server.
         WDS_SOCKET_HOST: process.env.WDS_SOCKET_HOST,
         WDS_SOCKET_PATH: process.env.WDS_SOCKET_PATH,
         WDS_SOCKET_PORT: process.env.WDS_SOCKET_PORT,
-        // Whether or not react-refresh is enabled.
-        // It is defined here so it is available in the webpackHotDevClient.
         FAST_REFRESH: process.env.FAST_REFRESH !== 'false'
       }
     );
-  // Stringify all values so we can feed into webpack DefinePlugin
   const stringified = {
     'process.env': Object.keys(raw).reduce((env, key) => {
       env[key] = JSON.stringify(raw[key]);
@@ -100,5 +131,3 @@ function getClientEnvironment(publicUrl) {
 
   return { raw, stringified };
 }
-
-export default getClientEnvironment;

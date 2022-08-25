@@ -1,11 +1,13 @@
 import path from 'node:path';
 import fs from 'node:fs';
 import chalk from 'chalk';
+import resolve from 'resolve';
 
 import compatMJSModule from '../utils/compatMJSModule.js';
-import { paths } from './env.js';
+import getPaths from './paths.js';
 
 const { require } = compatMJSModule(import.meta.url);
+const paths = getPaths();
 
 /**
  * Get additional module paths based on the baseUrl of a compilerOptions object.
@@ -87,13 +89,13 @@ function getJestAliases(options = {}) {
 
   if (path.relative(paths.appPath, baseUrlResolved) === '') {
     return {
-      '^@/(.*)$': '<rootDir>/src/$1',
       '^src/(.*)$': '<rootDir>/src/$1'
     };
   }
 }
 
 function getModules() {
+  // Check if TypeScript is setup
   const hasTsConfig = fs.existsSync(paths.appTsConfig);
   const hasJsConfig = fs.existsSync(paths.appJsConfig);
 
@@ -105,9 +107,16 @@ function getModules() {
 
   let config;
 
+  // If there's a tsconfig.json we assume it's a
+  // TypeScript project and set up the config
+  // based on tsconfig.json
   if (hasTsConfig) {
-    const ts = require('typescript');
+    const ts = require(resolve.sync('typescript', {
+      basedir: paths.appNodeModules
+    }));
     config = ts.readConfigFile(paths.appTsConfig, ts.sys.readFile).config;
+    // Otherwise we'll check if there is jsconfig.json
+    // for non TS projects.
   } else if (hasJsConfig) {
     config = require(paths.appJsConfig);
   }

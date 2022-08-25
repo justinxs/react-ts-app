@@ -1,4 +1,6 @@
-import { paths } from './config/env.js';
+import './config/test.env.js';
+import './utils/unhandledRejection.js';
+import './config/env.js';
 
 import path from 'node:path';
 import fs from 'node:fs';
@@ -11,8 +13,10 @@ import resolve from 'resolve';
 import compatMJSModule from './utils/compatMJSModule.js';
 
 import modules from './config/modules.js';
+import getPaths from './config/paths.js';
 
 const { require, dirname } = compatMJSModule(import.meta.url);
+const paths = getPaths();
 
 let argv = process.argv.slice(2);
 
