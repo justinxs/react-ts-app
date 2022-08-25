@@ -19,7 +19,6 @@ compiler.run((err, stats) => {
     }
   } else {
     printWebpackStats(stats, { colors: false });
-    console.log(chalk.cyan('Build complete.\n'));
   }
 
   statsErrorOrWarning(stats);

@@ -24,7 +24,6 @@ compiler.watch(
       }
     } else {
       printWebpackStats(stats);
-      console.log(chalk.cyan('Build complete.\n'));
     }
 
     statsErrorOrWarning(stats);

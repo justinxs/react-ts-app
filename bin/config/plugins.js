@@ -7,6 +7,7 @@ import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import ESLintPlugin from 'eslint-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
+import { WebpackManifestPlugin } from 'webpack-manifest-plugin';
 
 import InterpolateHtmlPlugin from '../utils/InterpolateHtmlPlugin.js';
 import progressOptions from './progressOptions.js';
@@ -27,6 +28,7 @@ export default function plugins({ paths, process_env, env, webpackEnv }) {
   const isEnvProduction = webpackEnv === 'production';
   const disableESLintPlugin = process_env.DISABLE_ESLINT_PLUGIN === 'true';
   const disableProgressPlugin = process_env.DISABLE_PROGRESS_PLUGIN === 'true';
+  const enableAssetsManiFest = process_env.ENABLE_ASSETS_MANIFEST === 'true';
   const useTypeScript = fs.existsSync(paths.appTsConfig);
 
   const ForkTsCheckerPlugin =
@@ -83,6 +85,25 @@ export default function plugins({ paths, process_env, env, webpackEnv }) {
       filename: 'static/css/[name].[contenthash:8].css',
       chunkFilename: 'static/css/[name].[contenthash:8].chunk.css'
     }),
+    enableAssetsManiFest &&
+      new WebpackManifestPlugin({
+        fileName: 'asset-manifest.json',
+        publicPath: paths.publicUrlOrPath,
+        generate: (seed, files, entrypoints) => {
+          const manifestFiles = files.reduce((manifest, file) => {
+            manifest[file.name] = file.path;
+            return manifest;
+          }, seed);
+          const entrypointFiles = entrypoints.main.filter(
+            (fileName) => !fileName.endsWith('.map')
+          );
+
+          return {
+            files: manifestFiles,
+            entrypoints: entrypointFiles
+          };
+        }
+      }),
     // Moment.js is an extremely popular library that bundles large locale files
     // by default due to how webpack interprets its code. This is a practical
     // solution that requires the user to opt into importing specific locales.
