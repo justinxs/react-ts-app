@@ -1,6 +1,6 @@
-export default function assetsLoaders({ process_env }) {
+export default function assetsLoaders(settings) {
   const imageInlineSizeLimit = parseInt(
-    process_env.IMAGE_INLINE_SIZE_LIMIT || '10000'
+    process.env.IMAGE_INLINE_SIZE_LIMIT || '10000'
   );
 
   return [

@@ -3,7 +3,6 @@ import fs from 'node:fs';
 import chalk from 'chalk';
 
 import compatCJSModule from '../utils/compatCJSModule.js';
-import { paths } from './env.js';
 
 const { require } = compatCJSModule(import.meta.url);
 
@@ -11,8 +10,9 @@ const { require } = compatCJSModule(import.meta.url);
  * Get additional module paths based on the baseUrl of a compilerOptions object.
  *
  * @param {Object} options
+ * @param {Object} paths
  */
-function getAdditionalModulePaths(options = {}) {
+function getAdditionalModulePaths(options = {}, paths) {
   const baseUrl = options.baseUrl;
 
   if (!baseUrl) {
@@ -54,8 +54,9 @@ function getAdditionalModulePaths(options = {}) {
  * Get webpack aliases based on the baseUrl of a compilerOptions object.
  *
  * @param {*} options
+ * @param {*} paths
  */
-function getWebpackAliases(options = {}) {
+function getWebpackAliases(options = {}, paths) {
   const baseUrl = options.baseUrl;
 
   if (!baseUrl) {
@@ -75,8 +76,9 @@ function getWebpackAliases(options = {}) {
  * Get jest aliases based on the baseUrl of a compilerOptions object.
  *
  * @param {*} options
+ * @param {*} paths
  */
-function getJestAliases(options = {}) {
+function getJestAliases(options = {}, paths) {
   const baseUrl = options.baseUrl;
 
   if (!baseUrl) {
@@ -93,7 +95,7 @@ function getJestAliases(options = {}) {
   }
 }
 
-function getModules() {
+function getModules(paths) {
   const hasTsConfig = fs.existsSync(paths.appTsConfig);
   const hasJsConfig = fs.existsSync(paths.appJsConfig);
 
@@ -115,14 +117,14 @@ function getModules() {
   config = config || {};
   const options = config.compilerOptions || {};
 
-  const additionalModulePaths = getAdditionalModulePaths(options);
+  const additionalModulePaths = getAdditionalModulePaths(options, paths);
 
   return {
     additionalModulePaths: additionalModulePaths,
-    webpackAliases: getWebpackAliases(options),
-    jestAliases: getJestAliases(options),
+    webpackAliases: getWebpackAliases(options, paths),
+    jestAliases: getJestAliases(options, paths),
     hasTsConfig
   };
 }
 
-export default getModules();
+export default getModules;

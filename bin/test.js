@@ -1,5 +1,3 @@
-import { paths } from './config/env.js';
-
 import path from 'node:path';
 import fs from 'node:fs';
 import { execSync } from 'node:child_process';
@@ -8,11 +6,17 @@ import chalk from 'chalk';
 import jest from 'jest';
 import resolve from 'resolve';
 
+import getEnv from './config/env.js';
 import compatCJSModule from './utils/compatCJSModule.js';
+import getModules from './config/getModules.js';
 
-import modules from './config/modules.js';
+process.env.BABEL_ENV = 'test';
+process.env.NODE_ENV = 'test';
+process.env.PUBLIC_URL = '';
 
 const { require, dirname } = compatCJSModule(import.meta.url);
+const { paths } = getEnv();
+const modules = getModules(paths);
 
 let argv = process.argv.slice(2);
 

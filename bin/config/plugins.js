@@ -22,17 +22,17 @@ class ForkTsCheckerWarningWebpackPlugin {
   }
 }
 
-export default function plugins({ paths, process_env, env, webpackEnv }) {
-  const shouldUseSourceMap = process_env.GENERATE_SOURCEMAP !== 'false';
+export default function plugins({ paths, clientEnv, webpackEnv }) {
+  const shouldUseSourceMap = process.env.GENERATE_SOURCEMAP !== 'false';
   const isEnvDevelopment = webpackEnv === 'development';
   const isEnvProduction = webpackEnv === 'production';
-  const disableESLintPlugin = process_env.DISABLE_ESLINT_PLUGIN === 'true';
-  const disableProgressPlugin = process_env.DISABLE_PROGRESS_PLUGIN === 'true';
-  const enableAssetsManiFest = process_env.ENABLE_ASSETS_MANIFEST === 'true';
+  const disableESLintPlugin = process.env.DISABLE_ESLINT_PLUGIN === 'true';
+  const disableProgressPlugin = process.env.DISABLE_PROGRESS_PLUGIN === 'true';
+  const enableAssetsManiFest = process.env.ENABLE_ASSETS_MANIFEST === 'true';
   const useTypeScript = fs.existsSync(paths.appTsConfig);
 
   const ForkTsCheckerPlugin =
-    process_env.TSC_COMPILE_ON_ERROR === 'true'
+    process.env.TSC_COMPILE_ON_ERROR === 'true'
       ? ForkTsCheckerWarningWebpackPlugin
       : ForkTsCheckerWebpackPlugin;
 
@@ -74,13 +74,13 @@ export default function plugins({ paths, process_env, env, webpackEnv }) {
           : undefined
       )
     ),
-    new InterpolateHtmlPlugin(HtmlWebpackPlugin, env.raw),
+    new InterpolateHtmlPlugin(HtmlWebpackPlugin, clientEnv.raw),
     // Makes some environment variables available to the JS code, for example:
     // if (process.env.NODE_ENV === 'production') { ... }. See `./env.js`.
     // It is absolutely essential that NODE_ENV is set to production
     // during a production build.
     // Otherwise React will be compiled in the very slow development mode.
-    new webpack.DefinePlugin(env.stringified),
+    new webpack.DefinePlugin(clientEnv.stringified),
     new MiniCssExtractPlugin({
       filename: 'static/css/[name].[contenthash:8].css',
       chunkFilename: 'static/css/[name].[contenthash:8].chunk.css'

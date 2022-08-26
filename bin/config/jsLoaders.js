@@ -2,12 +2,11 @@ import compatCJSModule from '../utils/compatCJSModule.js';
 
 const { require } = compatCJSModule(import.meta.url);
 
-export default function jsLoaders({ paths, process_env }) {
+export default function jsLoaders({ paths }) {
   const hasJsxRuntime = (() => {
-    if (process_env.DISABLE_NEW_JSX_TRANSFORM === 'true') {
+    if (process.env.DISABLE_NEW_JSX_TRANSFORM === 'true') {
       return false;
     }
-
     try {
       require.resolve('react/jsx-runtime');
       return true;

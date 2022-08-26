@@ -6,13 +6,6 @@ import dotenv from 'dotenv';
 import compatCJSModule from '../utils/compatCJSModule.js';
 import getPublicUrlOrPath from '../utils/getPublicUrlOrPath.js';
 
-const NODE_ENV = process.env.NODE_ENV;
-if (!NODE_ENV) {
-  throw new Error(
-    'The NODE_ENV environment variable is required but was not specified.'
-  );
-}
-
 const { require } = compatCJSModule(import.meta.url);
 const appDirectory = fs.realpathSync(process.cwd());
 const moduleFileExtensions = [
@@ -43,8 +36,10 @@ const resolveModule = (resolveFn, filePath) => {
   return resolveFn(`${filePath}.js`);
 };
 
+// 获取环境配置文件，并写入process.env
 // 权重 .env.development.local > .env.local > .env.development > .env
 const expandEnv = () => {
+  const NODE_ENV = process.env.NODE_ENV;
   const envPath = resolveApp('.env');
   const dotenvFiles = [
     `${envPath}.${NODE_ENV}.local`,
@@ -94,18 +89,7 @@ function getPaths() {
   };
 }
 
-// 获取环境配置文件，并写入process.env
-expandEnv();
-
-process.env.NODE_PATH = (process.env.NODE_PATH || '')
-  .split(path.delimiter)
-  .filter((folder) => folder && !path.isAbsolute(folder))
-  .map((folder) => path.resolve(appDirectory, folder))
-  .join(path.delimiter);
-
-export const paths = getPaths();
-
-export function getClientEnvironment(publicUrl) {
+function getClientEnvironment(publicUrl) {
   const raw = Object.keys(process.env)
     .filter((key) => REACT_APP.test(key))
     .reduce(
@@ -130,4 +114,31 @@ export function getClientEnvironment(publicUrl) {
   };
 
   return { raw, stringified };
+}
+
+export default function getEnv() {
+  // NODE_ENV must be ready
+  if (!process.env.NODE_ENV) {
+    throw new Error(
+      'The NODE_ENV environment variable is required but was not specified.'
+    );
+  }
+
+  // set process.env first depends on NODE_ENV
+  expandEnv();
+
+  // paths settings depends on process.env
+  const paths = getPaths();
+
+  // We will provide `paths.publicUrlOrPath` to our app
+  // as %PUBLIC_URL% in `index.html` and `process.env.PUBLIC_URL` in JavaScript.
+  // Omit trailing slash as %PUBLIC_URL%/xyz looks better than %PUBLIC_URL%xyz.
+  // Get environment variables to inject into our app.
+  const clientEnv = getClientEnvironment(paths.publicUrlOrPath.slice(0, -1));
+
+  // return global settings
+  return {
+    paths,
+    clientEnv
+  };
 }

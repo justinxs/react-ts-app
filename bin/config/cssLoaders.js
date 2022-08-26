@@ -13,10 +13,10 @@ const sassModuleRegex = /\.module\.(scss|sass)$/;
 const lessRegex = /\.(less)$/;
 const lessModuleRegex = /\.module\.(less)$/;
 
-export default function cssLoaders({ paths, process_env, webpackEnv }) {
-  const shouldUseSourceMap = process_env.GENERATE_SOURCEMAP !== 'false';
+export default function cssLoaders({ paths, webpackEnv }) {
   const isEnvDevelopment = webpackEnv === 'development';
   const isEnvProduction = webpackEnv === 'production';
+  const shouldUseSourceMap = process.env.GENERATE_SOURCEMAP !== 'false';
   // Check if Tailwind config exists
   const useTailwind = fs.existsSync(
     path.join(paths.appPath, 'tailwind.config.js')

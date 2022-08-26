@@ -3,17 +3,28 @@ import { merge } from 'webpack-merge';
 import WebpackDevServer from 'webpack-dev-server';
 import nodemon from 'nodemon';
 
-import configFactory, { paths } from './config/webpack.config.js';
+import getEnv from './config/env.js';
+import configFactory from './config/webpack.config.js';
 import devServerConfig from './config/devServerConfig.js';
 import { statsOptions } from './utils/printWebpackStats.js';
 
+// ready dev command env
+process.env.NODE_ENV = 'development';
+process.env.BABEL_ENV = 'development';
+
+const { paths, clientEnv } = getEnv();
+const devSettings = {
+  paths,
+  clientEnv,
+  webpackEnv: 'development'
+};
 const host = process.env.HOST || '0.0.0.0';
 const port = process.env.PORT || '3000';
 const proxyPort = process.env.PROXY_PORT || port - 1;
 const inspectPort = process.env.INSPECT_PORT || port - 2;
 
 const compiler = webpack(
-  merge(configFactory('development'), { stats: statsOptions })
+  merge(configFactory(devSettings), { stats: statsOptions })
 );
 const devServer = new WebpackDevServer(
   devServerConfig({ paths, host, port, proxyPort }),

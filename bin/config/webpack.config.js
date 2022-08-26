@@ -1,6 +1,5 @@
 import path from 'node:path';
 
-import { getClientEnvironment, paths } from './env.js';
 import assetsLoaders from './assetsLoader.js';
 import jsLoaders from './jsLoaders.js';
 import cssLoaders from './cssLoaders.js';
@@ -8,25 +7,14 @@ import plugins from './plugins.js';
 import webpackResolve from './webpackResolve.js';
 import webpackOptimization from './webpackOptimization.js';
 
-// We will provide `paths.publicUrlOrPath` to our app
-// as %PUBLIC_URL% in `index.html` and `process.env.PUBLIC_URL` in JavaScript.
-// Omit trailing slash as %PUBLIC_URL%/xyz looks better than %PUBLIC_URL%xyz.
-// Get environment variables to inject into our app.
-const env = getClientEnvironment(paths.publicUrlOrPath.slice(0, -1));
-// Source maps are resource heavy and can cause out of memory issue for large source files.
-const shouldUseSourceMap = process.env.GENERATE_SOURCEMAP !== 'false';
-
 // This is the production and development configuration.
 // It is focused on developer experience, fast rebuilds, and a minimal bundle.
-export default function configFactory(webpackEnv) {
+export default function configFactory(settings) {
+  const { paths, webpackEnv, clientEnv } = settings;
   const isEnvDevelopment = webpackEnv === 'development';
   const isEnvProduction = webpackEnv === 'production';
-  const envOptions = {
-    paths,
-    process_env: process.env,
-    env,
-    webpackEnv
-  };
+  // Source maps are resource heavy and can cause out of memory issue for large source files.
+  const shouldUseSourceMap = process.env.GENERATE_SOURCEMAP !== 'false';
 
   return {
     target: ['browserslist'],
@@ -66,8 +54,8 @@ export default function configFactory(webpackEnv) {
           ((info) =>
             path.resolve(info.absoluteResourcePath).replace(/\\/g, '/'))
     },
-    optimization: webpackOptimization(envOptions),
-    resolve: webpackResolve(envOptions),
+    optimization: webpackOptimization(settings),
+    resolve: webpackResolve(settings),
     module: {
       strictExportPresence: true,
       rules: [
@@ -76,9 +64,9 @@ export default function configFactory(webpackEnv) {
           // match the requirements. When no loader matches it will fall
           // back to the "file" loader at the end of the loader list.
           oneOf: [
-            ...assetsLoaders(envOptions),
-            ...jsLoaders(envOptions),
-            ...cssLoaders(envOptions),
+            ...assetsLoaders(settings),
+            ...jsLoaders(settings),
+            ...cssLoaders(settings),
             // "file" loader makes sure those assets get served by WebpackDevServer.
             // When you `import` an asset, you get its (virtual) filename.
             // In production, they would get copied to the `build` folder.
@@ -98,7 +86,7 @@ export default function configFactory(webpackEnv) {
         }
       ].filter(Boolean)
     },
-    plugins: [...plugins(envOptions)].filter(Boolean),
+    plugins: [...plugins(settings)].filter(Boolean),
     performance: {
       // 资源文件最大限制大小warning提示 1000kb
       maxAssetSize: 1000 * 1024,
@@ -106,5 +94,3 @@ export default function configFactory(webpackEnv) {
     }
   };
 }
-
-export { paths, env };

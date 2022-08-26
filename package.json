@@ -3,12 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "cross-env NODE_ENV=development BABEL_ENV=development node bin/start",
-    "dev": "cross-env NODE_ENV=development BABEL_ENV=development node bin/dev",
-    "build": "cross-env NODE_ENV=production BABEL_ENV=production node bin/build",
-    "test": "cross-env NODE_ENV=test BABEL_ENV=test node bin/test",
-    "preview": "cross-env NODE_ENV=production BABEL_ENV=production node bin/preview",
-    "analyze": "cross-env NODE_ENV=production BABEL_ENV=production node bin/analyze",
+    "start": "node bin/start",
+    "dev": "node bin/dev",
+    "build": "node bin/build",
+    "test": "node bin/test",
+    "preview": "cross-env PRINT_COLORS=true npm run build && node bin/preview",
+    "analyze": "node bin/analyze",
     "lint-fix": "eslint --fix --ext .js --ext .jsx --ext .ts --ext .tsx src"
   },
   "browserslist": {
