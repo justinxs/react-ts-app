@@ -20,8 +20,10 @@ const devSettings = {
 };
 const host = process.env.HOST || '0.0.0.0';
 const port = process.env.PORT || '3000';
-const proxyPort = process.env.PROXY_PORT || port - 1;
 const inspectPort = process.env.INSPECT_PORT || port - 2;
+
+process.env.SERVER_HOST = host;
+process.env.SERVER_PORT = port - 1;
 
 const compiler = webpack(
   merge(configFactory(devSettings), { stats: statsOptions })
@@ -31,9 +33,9 @@ const devServer = new WebpackDevServer(
   compiler
 );
 
-// nodemon(
-//   `-e js,json,html --watch server --ignore node_modules/**node_modules --inspect=${inspectPort} ./server/index.js`
-// );
+nodemon(
+  `-e js,json,html --watch server --ignore node_modules/**node_modules --inspect=${inspectPort} ./server/index.js`
+);
 
 devServer.start();
 
