@@ -9,7 +9,7 @@ const App: React.FC = () => {
       <div>
         <ul>
           <li>
-            <Link to='/tacos'>Tacos--</Link>
+            <Link to='/tacos'>Tacos</Link>
           </li>
           <li>
             <Link to='/sandwiches'>Sandwiches</Link>

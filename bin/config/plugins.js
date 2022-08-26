@@ -154,12 +154,9 @@ export default function plugins({ paths, clientEnv, webpackEnv }) {
             { file: '**/src/setupProxy.*' },
             { file: '**/src/setupTests.*' }
           ]
-        },
-        logger: {
-          infrastructure: 'silent'
         }
       }),
     !disableESLintPlugin && new ESLintPlugin(),
     !disableProgressPlugin && new webpack.ProgressPlugin(progressOptions)
-  ];
+  ].filter(Boolean);
 }

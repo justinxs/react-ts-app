@@ -4,6 +4,9 @@ import path from 'node:path';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 
 import getCSSModuleLocalIdent from '../utils/getCSSModuleLocalIdent.js';
+import compatCJSModule from '../utils/compatCJSModule.js';
+
+const { require } = compatCJSModule(import.meta.url);
 
 // style files regexes
 const cssRegex = /\.css$/;
@@ -21,6 +24,24 @@ export default function cssLoaders({ paths, webpackEnv }) {
   const useTailwind = fs.existsSync(
     path.join(paths.appPath, 'tailwind.config.js')
   );
+  // Check Sass
+  const useSass = (() => {
+    try {
+      require.resolve('sass-loader');
+      return true;
+    } catch (e) {
+      return false;
+    }
+  })();
+  // Check Less
+  const useLess = (() => {
+    try {
+      require.resolve('less-loader');
+      return true;
+    } catch (e) {
+      return false;
+    }
+  })();
   // common function to get style loaders
   const getStyleLoaders = (cssOptions, preProcessor) => {
     const loaders = [
@@ -121,7 +142,7 @@ export default function cssLoaders({ paths, webpackEnv }) {
         }
       })
     },
-    {
+    useSass && {
       test: sassRegex,
       exclude: sassModuleRegex,
       use: getStyleLoaders(
@@ -136,7 +157,7 @@ export default function cssLoaders({ paths, webpackEnv }) {
       ),
       sideEffects: true
     },
-    {
+    useSass && {
       test: sassModuleRegex,
       use: getStyleLoaders(
         {
@@ -150,7 +171,7 @@ export default function cssLoaders({ paths, webpackEnv }) {
         'sass-loader'
       )
     },
-    {
+    useLess && {
       test: lessRegex,
       exclude: lessModuleRegex,
       use: getStyleLoaders(
@@ -173,7 +194,7 @@ export default function cssLoaders({ paths, webpackEnv }) {
       ),
       sideEffects: true
     },
-    {
+    useLess && {
       test: lessModuleRegex,
       use: getStyleLoaders(
         {
@@ -195,5 +216,5 @@ export default function cssLoaders({ paths, webpackEnv }) {
         }
       )
     }
-  ];
+  ].filter(Boolean);
 }

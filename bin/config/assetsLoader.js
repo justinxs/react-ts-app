@@ -54,5 +54,5 @@ export default function assetsLoaders(settings) {
         and: [/\.(ts|tsx|js|jsx|md|mdx)$/]
       }
     }
-  ];
+  ].filter(Boolean);
 }
