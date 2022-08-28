@@ -41,7 +41,7 @@ compiler.watch(
   (err, stats) => {
     if (!serverStart) {
       nodemon(
-        `-e js,json,html --watch server --ignore node_modules/**node_modules --inspect=${inspectPort} ./server/index.js`
+        `-e js,json,html --watch server --watch ${paths.appBuild} --ignore node_modules/**node_modules --inspect=${inspectPort} ./server/index.js`
       );
       serverStart = true;
     }

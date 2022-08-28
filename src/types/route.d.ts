@@ -7,6 +7,7 @@ interface RouteProps {
 
 interface RouteItem {
   path: string;
+  exact?: boolean;
   component: React.FC<RouteProps>;
   routes?: RouteList;
 }

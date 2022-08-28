@@ -6,6 +6,11 @@ const Loading: React.FC = () => <Spin size='large' />;
 
 const routes: RouteList = [
   {
+    path: '/',
+    exact: true,
+    component: lazyComp(() => import('../components/Layout'))
+  },
+  {
     path: '/sandwiches',
     component: lazyComp(() => import('../pages/Sandwiches'))
   },
@@ -26,6 +31,6 @@ const routes: RouteList = [
         component: Cart
       }
     ]
-  }
+  },
 ];
 export default routes;

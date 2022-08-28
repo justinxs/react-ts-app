@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { LikeOutlined, UserOutlined } from '@ant-design/icons';
 import type { ProSettings } from '@ant-design/pro-components';
 import {
@@ -170,15 +171,19 @@ export default () => {
           );
         }}
         onMenuHeaderClick={(e) => console.log(e)}
-        menuItemRender={(item, dom) => (
-          <a
-            onClick={() => {
-              setPathname(item.path || '/welcome');
-            }}
-          >
-            {dom}
-          </a>
-        )}
+        menuItemRender={(menuItemProps, defaultDom) => {
+          if (menuItemProps.isUrl) {
+            return defaultDom;
+          }
+          if (menuItemProps.path && location.pathname !== menuItemProps.path) {
+            return (
+              <Link to={menuItemProps.path} target={menuItemProps.target}>
+                {defaultDom}
+              </Link>
+            );
+          }
+          return defaultDom;
+        }}
         rightContentRender={() => (
           <div>
             <Avatar shape='square' size='small' icon={<UserOutlined />} />
