@@ -1,7 +1,8 @@
+let reqId = 0;
 export default async (ctx, next) => {
-  console.log('start >>>', ctx.method, ctx.url);
+  console.log(`enter  ( ${++reqId} )  >>> ${ctx.method} ${ctx.url}`);
 
   await next();
 
-  console.log('end >>>', ctx.status, ctx.method, ctx.url);
+  console.log(`output ( ${reqId} )  >>> ${ctx.method} ${ctx.status} ${ctx.url}`);
 };
