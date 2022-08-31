@@ -1,5 +1,7 @@
-import staticResource from "./staticResource.js";
+import exception from './exception.js';
+import logger from './logger.js';
 
-export default function plugins(fastify) {
-  staticResource(fastify);
-}
+export default (app, config = {}) => {
+  exception(app, config.exception);
+  logger(app);
+};

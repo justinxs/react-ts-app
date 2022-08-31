@@ -1,30 +1,32 @@
-import { readFile } from 'node:fs/promises';
-import Fastify from 'fastify';
-import { getLocalIP } from './utils/index.js';
+import Koa from 'koa';
+import router from './routes/index.js';
 import plugins from './plugins/index.js';
-import getLogger from './utils/logger.js';
+import middleware from './middleware/index.js';
+import { getLocalIP } from './utils/ip.js';
 
-const host = process.env.SERVER_HOST || '0.0.0.0';
-const port = process.env.SERVER_PORT || '3000';
-const fastify = Fastify({
-  logger: getLogger()
-});
+const NODE_ENV = process.env.NODE_ENV || 'production';
+const HOST = process.env.SERVER_HOST || '0.0.0.0';
+const PORT = process.env.SERVER_PORT || '3000';
+const app = new Koa();
 
-plugins(fastify);
+async function start() {
+  // 允许代理
+  app.proxy = true;
 
-fastify.get('*', async (request, reply) => {
-  const template = await readFile(
-    new URL('../dist/index.html', import.meta.url),
-    {
-      encoding: 'utf-8'
-    }
-  );
-  reply.type('text/html').code(200);
-  return template;
-});
+  // 插件
+  plugins(app);
 
-fastify.listen({ port, host }, (err, address) => {
-  if (err) throw err;
-  fastify.log.info('listening http://localhost:' + port);
-  fastify.log.info(`listening http://${getLocalIP()}:` + port);
-});
+  // koa中间件
+  middleware(app);
+
+  // 路由中间件
+  app.use(router.routes());
+  app.use(router.allowedMethods());
+
+  app.listen(PORT, HOST);
+  console.log('listening http://localhost:' + PORT);
+  NODE_ENV === 'development' &&
+    console.log(`listening http://${getLocalIP()}:` + PORT);
+}
+
+start().catch((err) => console.error('server start error:', err));
