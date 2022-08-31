@@ -6,7 +6,8 @@ import { getLocalIP } from './utils/ip.js';
 
 const NODE_ENV = process.env.NODE_ENV || 'production';
 const HOST = process.env.SERVER_HOST || '0.0.0.0';
-const PORT = process.env.SERVER_PORT || '3000';
+const PORT = process.env.SERVER_PORT || '9000';
+const isDev = NODE_ENV === 'development';
 const app = new Koa();
 
 async function start() {
@@ -24,9 +25,8 @@ async function start() {
   app.use(router.allowedMethods());
 
   app.listen(PORT, HOST);
-  console.log('listening http://localhost:' + PORT);
-  NODE_ENV === 'development' &&
-    console.log(`listening http://${getLocalIP()}:` + PORT);
+  console.log(`listening http://localhost:${PORT}`);
+  isDev && console.log(`listening http://${getLocalIP()}:${PORT}`);
 }
 
 start().catch((err) => console.error('server start error:', err));

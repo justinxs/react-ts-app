@@ -1,4 +1,8 @@
 import path from 'node:path';
+import fs from 'node:fs';
+import { fileURLToPath } from 'node:url';
+
+import createEnvironmentHash from '../utils/createEnvironmentHash.js';
 
 import assetsLoaders from './assetsLoader.js';
 import jsLoaders from './jsLoaders.js';
@@ -53,6 +57,19 @@ export default function configFactory(settings) {
         : isEnvDevelopment &&
           ((info) =>
             path.resolve(info.absoluteResourcePath).replace(/\\/g, '/'))
+    },
+    cache: {
+      type: 'filesystem',
+      version: createEnvironmentHash(clientEnv.raw),
+      cacheDirectory: paths.appWebpackCache,
+      store: 'pack',
+      buildDependencies: {
+        defaultWebpack: ['webpack/lib/'],
+        config: [fileURLToPath(import.meta.url)],
+        tsconfig: [paths.appTsConfig, paths.appJsConfig].filter((f) =>
+          fs.existsSync(f)
+        )
+      }
     },
     optimization: webpackOptimization(settings),
     resolve: webpackResolve(settings),
